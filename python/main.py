@@ -10,7 +10,7 @@ import pandas
 
 from BTinterface import BTInterface
 from maze import Action, Maze
-from score import Scoreboard, ScoreboardFake
+from score import ScoreboardServer, ScoreboardFake
 
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
@@ -39,7 +39,7 @@ def parse_args():
 
 def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: str):
     maze = Maze(maze_file)
-    #point = Scoreboard(team_name, server_url)
+    point = ScoreboardServer(team_name, server_url)
     # point = ScoreboardFake("your team name", "data/fakeUID.csv") # for local testing
     interface = BTInterface(port=bt_port)
     # TODO : Initialize necessary variables
@@ -65,13 +65,18 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
                 command += 'r'
             if move == 4:
                 command += 'l'
-        print(len(moves))
+        command += 's'
         print(command)
-        interface.bt.serial_write_string(command)
+        #interface.bt.serial_write_string(command)
         while True:
-            readThread = threading.Thread(target=interface.bt.serial_read_byte)
-            readThread.daemon = True
-            readThread.start()
+            uid = interface.get_UID()
+            if uid != 0:
+                uid = uid.upper()
+                print(uid[2:])
+                score, time_remaining = point.add_UID(uid[2:])
+                current_score = point.get_current_score()
+                log.info(f"Current score: {current_score}")
+
 
     else:
         log.error("Invalid mode")

@@ -53,7 +53,6 @@ class Bluetooth:
         if rv:
             uid = hex(int.from_bytes(rv, byteorder="big", signed=False))
             self.serial.reset_input_buffer()
-            print(uid)
             return uid
         else:
             return 0

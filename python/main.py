@@ -64,6 +64,7 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
         command += 's'
         print(command)
         point = ScoreboardServer(team_name, server_url)
+        time.sleep(5)
         interface.bt.serial_write_string(command)
         while True:
             uid = interface.get_UID()

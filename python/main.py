@@ -39,10 +39,7 @@ def parse_args():
 
 def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: str):
     maze = Maze(maze_file)
-    point = ScoreboardServer(team_name, server_url)
-    # point = ScoreboardFake("your team name", "data/fakeUID.csv") # for local testing
     interface = BTInterface(port=bt_port)
-    # TODO : Initialize necessary variables
 
     if mode == "0":
         log.info("Mode 0: For treasure-hunting")
@@ -53,7 +50,6 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
         node1 = maze.get_node_dict()[3]
         visited = []
         visited = maze.BFS(node1)
-        #visited.insert(0, node1)
         moves = maze.getActions(visited)
         command = ''
         for move in moves:
@@ -67,7 +63,8 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
                 command += 'l'
         command += 's'
         print(command)
-        #interface.bt.serial_write_string(command)
+        point = ScoreboardServer(team_name, server_url)
+        interface.bt.serial_write_string(command)
         while True:
             uid = interface.get_UID()
             if uid != 0:
